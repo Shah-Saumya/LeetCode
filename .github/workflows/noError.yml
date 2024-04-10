@@ -1,0 +1,29 @@
+name: Rust Code Checks
+
+on:
+  push:
+    paths:
+      - '**.rs'
+  pull_request:
+    paths:
+      - '**.rs'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    - name: Check
+      run: |
+        for dir in $(find . -name "Cargo.toml" -printf '%h\n'); do
+          pushd "$dir"
+          cargo check
+          popd
+        done
