@@ -10,7 +10,7 @@ fn main() {
 struct Solution;
 
 impl Solution {
-    pub fn roman_to_int(s: String) -> i32 {
+    pub fn roman_to_int(s: String) -> i32 
         if s.len() == 0 {
             panic!("Roman Number cann't be empty")
         }
