@@ -7,8 +7,8 @@
 
 fn main() {
     // Example 1: nums1 = [1,3], nums2 = [2]
-    let nums1 = vec![1, 3];
-    let nums2 = vec![2];
+    let nums1 = vec![1, 3, 4];
+    let nums2 = vec![2, 5];
     let result = Solution::find_median_sorted_arrays(nums1, nums2);
     println!("Median: {}", result);
 
@@ -23,9 +23,14 @@ struct Solution;
 
 impl Solution {
     pub fn find_median_sorted_arrays(nums1: Vec<i32>, nums2: Vec<i32>) -> f64 {
-        // TODO: Implement your solution here
-        // Hint: You may need to merge the arrays or use binary search
-        // for optimal O(log(m+n)) complexity
-        todo!()
+        let mut nums = nums1.clone();
+        nums.append(&mut nums2.clone());
+        nums.sort();
+        let n_len = nums.len();
+        if n_len % 2 == 0 {
+            ((nums[n_len / 2] + nums[(n_len / 2) - 1]) as f64) / 2.0
+        } else {
+            nums[n_len / 2] as f64
+        }
     }
 }
