@@ -2,7 +2,7 @@
 // Given a string s, find the length of the longest substring without repeating characters.
 
 fn main() {
-    let result = Solution::length_of_longest_substring("sdfkjhsdkfhsjfhsdhh".to_string());
+    let result = Solution::length_of_longest_substring("dfhf".to_string());
     println!("{result}");
 }
 
@@ -14,64 +14,40 @@ impl Solution {
         if s.len() == 1 {
             return 1;
         }
-        let rev_s = Solution::reverse_string(s.clone());
-        let str_vec = Solution::get_str_vec(s);
-        let rev_str_vec = Solution::get_str_vec(rev_s);
-        let max = Solution::get_max_len(str_vec);
-        let rev_max = Solution::get_max_len(rev_str_vec);
-        if max > rev_max { max } else { rev_max }
-    }
-
-    fn get_max_len(vec: Vec<String>) -> i32 {
-        if vec.len() == 0 {
-            return 0;
-        }
-        if vec.len() == 1 {
-            return vec[0].len() as i32;
-        }
-        let answer_str = vec
-            .iter()
-            .reduce(|a, b| {
-                if a.len() > b.len() {
-                    return a;
-                } else {
-                    return b;
+        let mut max_vec = Vec::new();
+        'outer: for i in 0..s.len() {
+            let mut temp_str = String::new();
+            println!("Temp String: {} | Iter: {}", temp_str, i);
+            for (j, ch) in s.chars().enumerate() {
+                if j < i {
+                    continue;
                 }
-            })
-            .unwrap();
-        answer_str.len() as i32
-    }
-
-    fn reverse_string(s: String) -> String {
-        let mut rev = String::new();
-        // for i in s.len()..0 {
-        //     rev.push(s);
-        // }
-        rev
-    }
-
-    fn get_str_vec(s: String) -> Vec<String> {
-        println!("Start of the function get_str_vec\n\t-> String: {s}");
-        let mut str_vec: Vec<String> = Vec::new();
-        let mut temp_str = String::new();
-        println!("The loop is starting...");
-        for (i, char) in s.chars().enumerate() {
-            println!("\t-> {char}");
-            if temp_str.len() == 0 {
-                temp_str.push(char);
-            } else if temp_str.contains(char) {
-                str_vec.push(temp_str.clone());
-                temp_str = String::from(char);
-            } else if i == s.len() - 1 {
-                temp_str.push(char);
-                str_vec.push(temp_str.clone());
-            } else {
-                temp_str.push(char);
+                if temp_str.len() == 0 {
+                    temp_str.push(ch);
+                } else if temp_str.contains(ch) {
+                    max_vec.push(temp_str.clone());
+                    temp_str = String::new();
+                    if temp_str.len() > s.len() - i {
+                        break 'outer;
+                    }
+                } else {
+                    temp_str.push(ch);
+                }
+                if j == s.len() - 1 {
+                    max_vec.push(temp_str.clone());
+                }
+                println!("\tTemp String: {} | Iter: {}-{}", temp_str, i, j);
             }
-            println!("\t--> {temp_str}");
         }
-        println!("The loop has ended\n\tString Vector: {:?}", str_vec);
-        str_vec
+        println!("{:?}", max_vec);
+        let max = max_vec.iter().reduce(|a, b| {
+            if a.len() > b.len() {
+                return a;
+            } else {
+                return b;
+            }
+        });
+        max.unwrap().len() as i32
     }
 }
 
@@ -114,6 +90,22 @@ mod test {
     fn test_case_05() {
         let s = "1R1T7".to_string();
         let expected = 4;
+
+        assert_eq!(Solution::length_of_longest_substring(s), expected);
+    }
+
+    #[test]
+    fn test_case_06() {
+        let s = "afedacd".to_string();
+        let expected = 5;
+
+        assert_eq!(Solution::length_of_longest_substring(s), expected);
+    }
+
+    #[test]
+    fn test_case_07() {
+        let s = "afeda*&^%^%#^&%*&^&^$^#%^&^HJGKJFuhsdfisndfiufeiwufhihksjdfhiuehifuhsidufiuei*&GU&T*SD*W&EYYEGD*&#^DGWUD&#YD#G&EY^G#R*&#YGYDGEWYU&#&^@!(*WEU*#(@#*&hiuhiufhsiufhsfiushfuiwehiuhsiufieufhfsiufcd".to_string();
+        let expected = 10;
 
         assert_eq!(Solution::length_of_longest_substring(s), expected);
     }
