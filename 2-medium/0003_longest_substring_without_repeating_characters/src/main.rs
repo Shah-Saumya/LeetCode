@@ -10,44 +10,51 @@ struct Solution;
 
 impl Solution {
     pub fn length_of_longest_substring(s: String) -> i32 {
-        println!("Start of the input function\n\tString: {s}");
         if s.len() == 1 {
             return 1;
         }
-        let mut max_vec = Vec::new();
-        'outer: for i in 0..s.len() {
-            let mut temp_str = String::new();
-            println!("Temp String: {} | Iter: {}", temp_str, i);
-            for (j, ch) in s.chars().enumerate() {
-                if j < i {
-                    continue;
+
+        let mut s_vec = Vec::new();
+        s_vec.reserve_exact(s.len());
+        s.chars().for_each(|a| s_vec.push(a));
+
+        let mut temp_str = String::new();
+        let mut max_len = 0;
+
+        let mut start_ptr = 0;
+        let mut moving_ptr = 1;
+        while start_ptr != s.len() {
+            if temp_str.len() == 0 {
+                temp_str.push(s_vec[start_ptr]);
+                continue;
+            }
+
+            if moving_ptr == s.len() - 1 {
+                if !temp_str.contains(s_vec[moving_ptr]) {
+                    temp_str.push(s_vec[moving_ptr]);
                 }
-                if temp_str.len() == 0 {
-                    temp_str.push(ch);
-                } else if temp_str.contains(ch) {
-                    max_vec.push(temp_str.clone());
-                    temp_str = String::new();
-                    if temp_str.len() > s.len() - i {
-                        break 'outer;
-                    }
-                } else {
-                    temp_str.push(ch);
-                }
-                if j == s.len() - 1 {
-                    max_vec.push(temp_str.clone());
-                }
-                println!("\tTemp String: {} | Iter: {}-{}", temp_str, i, j);
+                max_len = max_len.max(temp_str.len());
+                start_ptr += 1;
+                moving_ptr = start_ptr + 1;
+                continue;
+            } else if moving_ptr > s.len() - 1 {
+                max_len = max_len.max(temp_str.len());
+                start_ptr += 1;
+                moving_ptr = start_ptr + 1;
+                continue;
+            }
+
+            if temp_str.contains(s_vec[moving_ptr]) {
+                max_len = max_len.max(temp_str.len());
+                temp_str = String::new();
+                start_ptr += 1;
+                moving_ptr = start_ptr + 1;
+            } else {
+                temp_str.push(s_vec[moving_ptr]);
+                moving_ptr += 1;
             }
         }
-        println!("{:?}", max_vec);
-        let max = max_vec.iter().reduce(|a, b| {
-            if a.len() > b.len() {
-                return a;
-            } else {
-                return b;
-            }
-        });
-        max.unwrap().len() as i32
+        max_len as i32
     }
 }
 
